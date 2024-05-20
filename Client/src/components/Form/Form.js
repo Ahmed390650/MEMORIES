@@ -4,6 +4,7 @@ import { Button, Paper, TextField, Typography } from "@material-ui/core";
 import FileBase from "react-file-base64";
 import { useDispatch, useSelector } from "react-redux";
 import { createPosts, updatePost } from "../../actions/posts";
+
 const initPostData = {
   creator: "",
   title: "",
