@@ -12,8 +12,11 @@ export const getPosts = async (req, res) => {
 
 export const createPosts = async (req, res) => {
   const post = req.body;
-
-  const newPost = new postModule(post);
+  const newPost = new postModule({
+    ...post,
+    creator: req.userId,
+    createAt: new Date().toISOString(),
+  });
   try {
     newPost.save();
     res.status(201).json(newPost);
@@ -34,20 +37,20 @@ export const updatePost = async (req, res) => {
 };
 export const likePost = async (req, res) => {
   const { _id } = req.params;
-
+  if (!req.userId) return res.status(402).json({ message: "Unauthenticated" });
   if (!mongoose.Types.ObjectId.isValid(_id))
     return res.status(404).json("unvalid object id");
-
   const post = await postModule.findById(_id);
-  const updatePost = await postModule.findByIdAndUpdate(
-    _id,
-    {
-      likeCount: post.likeCount + 1,
-    },
-    {
-      new: true,
-    }
-  );
+
+  const index = post.likeCount.findIndex((id) => id === String(req.userId));
+  if (index === -1) {
+    post.likeCount.push(req.userId);
+  } else {
+    post.likeCount = post.likeCount.filter((id) => id !== String(req.userId));
+  }
+  const updatePost = await postModule.findByIdAndUpdate(_id, post, {
+    new: true,
+  });
   res.status(201).json(updatePost);
 };
 export const deletePost = async (req, res) => {

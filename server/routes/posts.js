@@ -6,13 +6,14 @@ import {
   likePost,
   updatePost,
 } from "../controllers/posts.js";
+import auth from "../middleware/auth.js";
 
 const route = expres.Router();
 
 route.get("/", getPosts);
-route.post("/", createPosts);
-route.patch("/:_id", updatePost);
-route.delete("/:_id", deletePost);
-route.patch("/:_id/likePost", likePost);
+route.post("/", auth, createPosts);
+route.patch("/:_id", auth, updatePost);
+route.delete("/:_id", auth, deletePost);
+route.patch("/:_id/likePost", auth, likePost);
 
 export default route;
