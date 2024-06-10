@@ -2,9 +2,46 @@ import mongoose from "mongoose";
 import postModule from "../modules/postMessage.js";
 
 export const getPosts = async (req, res) => {
+  const { page } = req.query;
   try {
-    const postMessage = await postModule.find();
-    res.status(200).json(postMessage);
+    const limit = 8;
+    const skip = (Number(page) - 1) * limit;
+    const total = await postModule.countDocuments({});
+    const posts = await postModule
+      .find()
+      .sort({ _id: -1 })
+      .limit(limit)
+      .skip(skip);
+    res.status(200).json({
+      data: posts,
+      currentPage: Number(page),
+      numberOfPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
+};
+export const getPost = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const post = await postModule.findById(id);
+    res.status(200).json({
+      post,
+    });
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
+};
+
+export const getPostsBySearch = async (req, res) => {
+  const { SearchQuery, tags } = req.query;
+  try {
+    const title = new RegExp(SearchQuery, "i");
+    const posts = await postModule.find({
+      $or: [{ title }, { tags: { $in: tags.split(",") } }],
+    });
+
+    res.status(200).json({ data: posts });
   } catch (error) {
     res.status(401).json({ message: error.message });
   }

@@ -10,7 +10,8 @@ API.interceptors.request.use((req) => {
   }
   return req;
 });
-export const fetchPosts = () => API.get("/posts");
+export const fetchPosts = (page) => API.get(`/posts?page=${page}`);
+export const fetchPost = (id) => API.get(`/posts/${id}`);
 export const createPosts = (newPost) => API.post("/posts", newPost);
 export const updatePost = (id, updatedPost) =>
   API.patch(`${"/posts"}/${id}`, updatedPost);
@@ -18,3 +19,9 @@ export const deletePost = (id) => API.delete(`${"/posts"}/${id}`);
 export const likePost = (id) => API.patch(`${"/posts"}/${id}/likePost`);
 export const signup = (formData) => API.post("/user/signup", formData);
 export const signIn = (formData) => API.post("/user/signin", formData);
+export const fetchPostsBySearch = (SearchQuery) =>
+  API.get(
+    `/posts/search?SearchQuery=${SearchQuery.search || "none"}&tags=${
+      SearchQuery.tags
+    }`
+  );

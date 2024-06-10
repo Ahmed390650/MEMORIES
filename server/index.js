@@ -5,8 +5,7 @@ import mongoose from "mongoose";
 import { posts, userRouter } from "./routes/index.js";
 const app = expres();
 
-const mongodbURL = "mongodb://localhost:27017";
-
+const mongodbURL = "mongodb://127.0.0.1:27017/MEMORIES  ";
 const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
